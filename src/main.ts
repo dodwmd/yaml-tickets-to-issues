@@ -1,18 +1,15 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { Logger } from './logger.js';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as yaml from 'js-yaml';
-import { glob } from 'glob';
+// Use require for js-yaml to avoid module resolution issues
+const yaml = require('js-yaml');
+// Use require for glob to avoid module resolution issues
+const { glob } = require('glob');
 import { Validator } from 'jsonschema';
+import { readFile, readdir, writeFile, unlink, stat } from 'fs/promises';
+import { join, basename, dirname } from 'path';
 
-import { readFile } from 'fs/promises';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// Schema resolution is handled via process.cwd()
 
 // Define the schema type
 type SchemaType = {
@@ -32,7 +29,7 @@ type TicketSchema = SchemaType & {
 };
 
 // Load schema file
-const schemaPath = new URL('../../schemas/ticket-schema.json', import.meta.url).pathname;
+const schemaPath = join(process.cwd(), 'schemas/ticket-schema.json');
 const schema = JSON.parse(await readFile(schemaPath, 'utf-8')) as TicketSchema;
 
 interface ChildTicket {
@@ -85,11 +82,11 @@ function validateTicket(ticket: unknown, filePath: string): ticket is Ticket {
 
 function normalizePath(inputPath: string, baseDir: string): string {
   // If path is absolute, return as is
-  if (path.isAbsolute(inputPath)) {
+  if (inputPath.startsWith('/')) {
     return inputPath;
   }
   // If path is relative, resolve against base directory
-  const resolvedPath = path.resolve(baseDir, inputPath);
+  const resolvedPath = join(baseDir, inputPath);
   core.debug(`Normalized path: ${inputPath} -> ${resolvedPath}`);
   return resolvedPath;
 }
@@ -141,30 +138,28 @@ async function run(): Promise<void> {
     
     // Check if directory exists and is accessible
     try {
-      const stats = await fs.promises.stat(ticketsPath);
+      const stats = await stat(ticketsPath);
       if (!stats.isDirectory()) {
         throw new Error(`Path exists but is not a directory: ${ticketsPath}`);
       }
+      
+      // List directory contents for debugging
+      const files = await readdir(ticketsPath, { withFileTypes: true });
+      const fileList = files
+        .map((dirent: { isDirectory: () => boolean; name: string; isSymbolicLink: () => boolean }) => 
+          `  ${dirent.isDirectory() ? '📁' : '📄'} ${dirent.name}${dirent.isSymbolicLink() ? ' (symlink)' : ''}`)
+        .join('\n');
+      logger.debug(`Directory contents (${files.length} items):\n${fileList}`);
+      
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       core.error(`Error accessing directory ${ticketsPath}: ${errorMessage}`);
       core.error(`Current working directory: ${process.cwd()}`);
-      core.error(`Resolved path: ${path.resolve(ticketsPath)}`);
+      core.error(`Resolved path: ${ticketsPath}`);
       throw new Error(`Directory does not exist or is not accessible: ${ticketsPath}`);
     }
     
-    // List directory contents for debugging
-    try {
-      const files = await fs.promises.readdir(ticketsPath, { withFileTypes: true });
-      const fileList = files
-        .map(dirent => `  ${dirent.isDirectory() ? '📁' : '📄'} ${dirent.name}${dirent.isSymbolicLink() ? ' (symlink)' : ''}`)
-        .join('\n');
-      logger.debug(`Directory contents (${files.length} items):\n${fileList}`);
-    } catch (error: unknown) {
-      logger.warn(`Could not list directory contents: ${error instanceof Error ? error.message : String(error)}`);
-    }
-    
-    // Ensure the path ends with a path separator for glob
+    // Normalize the path ends with a path separator for glob
     const pattern = `${normalizedPath}*.yaml`;
     logger.debug(`Using glob pattern: ${pattern}`);
     
@@ -186,7 +181,7 @@ async function run(): Promise<void> {
     if (yamlFiles.length > 0) {
       logger.success(`Found ${yamlFiles.length} YAML file(s) to process`);
       if (logger.isDebugEnabled()) {
-        yamlFiles.forEach((file, index) => {
+        yamlFiles.forEach((file: string, index: number) => {
           logger.debug(`${index + 1}. ${file}`);
         });
       }
@@ -197,12 +192,12 @@ async function run(): Promise<void> {
     }
 
     for (const filePath of yamlFiles) {
-      const fileName = path.basename(filePath);
+      const fileName = basename(filePath);
       logger.startGroup(`Processing: ${fileName}`);
       
       try {
         logger.debug(`File path: ${filePath}`);
-        const fileContent = fs.readFileSync(filePath, 'utf8');
+        const fileContent = await readFile(filePath, 'utf8');
         logger.debug(`File size: ${fileContent.length} characters`);
         
         let ticket: unknown;
@@ -283,8 +278,10 @@ async function run(): Promise<void> {
           // Rename the file to include the new issue number
           if (issue.number) {
             const newFileName = `TICKET-${issue.number}-${fileName.split('-').slice(1).join('-')}`
-            const newFilePath = path.join(path.dirname(filePath), newFileName)
-            fs.renameSync(filePath, newFilePath)
+            const newFilePath = join(dirname(filePath), newFileName);
+            await readFile(filePath).then(content => 
+              writeFile(newFilePath, content).then(() => unlink(filePath))
+            )
             logger.info(`Renamed ${fileName} to ${newFileName}`)
           }
         }

@@ -71,8 +71,8 @@
   "license": "MIT",
   "dependencies": {
     "@octokit/rest": "^21.1.1",
-    "glob": "^10.4.5",
-    "js-yaml": "^4.1.0"
+    "glob": "^8.1.0",
+    "js-yaml": "4.1.0"
   },
   "eslintConfig": {
     "extends": "./.eslintrc.json"
@@ -83,9 +83,9 @@
     "@eslint/js": "^9.27.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@types/glob": "^8.1.0",
+    "@types/glob": "^8.0.0",
     "@types/jest": "^29.5.0",
-    "@types/js-yaml": "^4.0.9",
+    "@types/js-yaml": "^4.0.5",
     "@types/jsonschema": "^0.0.5",
     "@types/node": "^20.17.47",
     "@typescript-eslint/eslint-plugin": "^6.0.0",

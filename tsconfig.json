@@ -19,8 +19,9 @@
       "*": ["node_modules/*"]
     }
   },
-  "include": ["src/**/*.ts", "schemas/**/*.json"],
-  "exclude": ["node_modules", "**/*.test.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "schemas/**/*.json"],
+  "typeRoots": ["./node_modules/@types", "./src"],
+  "exclude": ["node_modules", "**/*.test.ts", "**/*.d.ts"],
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"
