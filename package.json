@@ -2,6 +2,7 @@
   "name": "yaml-tickets-to-issues",
   "version": "1.0.0",
   "description": "GitHub Action to sync YAML ticket files with GitHub Issues",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "build": "ncc build src/main.ts -o dist --source-map --license licenses.txt",
@@ -74,7 +75,7 @@
     "js-yaml": "^4.1.0"
   },
   "eslintConfig": {
-    "extends": "./.eslintrc.js"
+    "extends": "./.eslintrc.json"
   },
   "devDependencies": {
     "@actions/core": "^1.11.1",
