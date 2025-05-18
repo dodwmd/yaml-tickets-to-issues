@@ -1,0 +1,53 @@
+extends: default
+
+rules:
+  # Use 2 spaces for indentation
+  indentation:
+    spaces: 2
+    indent-sequences: true
+    check-multi-line-strings: false
+
+  # Line length (120 characters)
+  line-length: disable
+
+  # No tabs for indentation
+  indentation: disable
+
+  # No trailing spaces
+  trailing-spaces: disable
+
+  # No empty lines at the end of files
+  document-end: disable
+
+  # No multiple empty lines
+  empty-lines: disable
+
+  # Consistent spacing around colons in mappings
+  colons: disable
+
+  # Consistent spacing around commas
+  commas: disable
+
+  # Consistent spacing around brackets
+  brackets: disable
+
+  # Consistent spacing after commas
+  commas: disable
+
+  # Consistent spacing after hyphens in sequences
+  hyphens: disable
+
+  # Consistent spacing around colons in mappings
+  colons: disable
+
+  # Consistent spacing after commas
+  commas: disable
+
+  # Consistent spacing around brackets
+  brackets: disable
+
+  # Consistent spacing after commas
+  commas: disable
+
+  # Consistent spacing after hyphens in sequences
+  hyphens: disable

@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GitHub Issue Ticket Schema",
+  "description": "Schema for GitHub issue tickets defined in YAML format",
+  "type": "object",
+  "required": ["title", "description"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the issue"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the issue"
+    },
+    "child_tickets": {
+      "type": "array",
+      "description": "List of child tickets",
+      "items": {
+        "type": "object",
+        "required": ["id", "title"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the child ticket"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the child ticket"
+          }
+        }
+      }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "description": "List of acceptance criteria",
+      "items": {
+        "type": "string"
+      }
+    },
+    "technical_details": {
+      "type": "object",
+      "description": "Technical details and specifications",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "type": "object"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "sub_tasks": {
+      "type": "array",
+      "description": "List of sub-tasks",
+      "items": {
+        "type": "string"
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "List of dependencies",
+      "items": {
+        "type": "string"
+      }
+    },
+    "estimated_time": {
+      "type": "string",
+      "description": "Estimated time to complete"
+    },
+    "complexity": {
+      "type": "string",
+      "description": "Complexity level (e.g., Low, Medium, High)",
+      "enum": ["Low", "Medium", "High"]
+    },
+    "change_impact": {
+      "type": "string",
+      "description": "Impact level of the change (e.g., Low, Medium, High)",
+      "enum": ["Low", "Medium", "High"]
+    }
+  },
+  "additionalProperties": false
+}
