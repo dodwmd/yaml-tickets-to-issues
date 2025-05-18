@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2020",
+    "target": "ES2020",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
@@ -12,10 +12,14 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
-    "lib": ["es2020"],
-    "types": ["node"]
+    "lib": ["ES2020"],
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*"]
+    }
   },
-  "include": ["src/**/*", "schemas/**/*.json"],
+  "include": ["src/**/*.ts", "schemas/**/*.json"],
   "exclude": ["node_modules", "**/*.test.ts"],
   "ts-node": {
     "esm": true,

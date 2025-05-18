@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { Logger } from './logger';
+import { Logger } from './logger.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
@@ -32,7 +32,7 @@ type TicketSchema = SchemaType & {
 };
 
 // Load schema file
-const schemaPath = join(__dirname, '../../schemas/ticket-schema.json');
+const schemaPath = new URL('../../schemas/ticket-schema.json', import.meta.url).pathname;
 const schema = JSON.parse(await readFile(schemaPath, 'utf-8')) as TicketSchema;
 
 interface ChildTicket {
