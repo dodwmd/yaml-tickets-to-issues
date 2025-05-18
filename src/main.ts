@@ -6,18 +6,34 @@ import * as path from 'path';
 import * as yaml from 'js-yaml';
 import { glob } from 'glob';
 import { Validator } from 'jsonschema';
-import { Octokit } from '@octokit/rest';
 
-// Import the schema using require for CommonJS compatibility
-const schema = require('../schemas/ticket-schema.json') as {
-  type: string;
+import { readFile } from 'fs/promises';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Define the schema type
+type SchemaType = {
+  type: string | string[];
+  required?: string[];
+  properties?: Record<string, SchemaType>;
+  additionalProperties?: boolean | SchemaType;
+  [key: string]: unknown; // Allow additional properties
+};
+
+// Define the ticket schema type
+type TicketSchema = SchemaType & {
+  type: 'object';
   required: string[];
-  properties: Record<string, unknown>;
+  properties: Record<string, SchemaType>;
   additionalProperties: boolean;
 };
 
-// Type definitions for the schema
-type TicketSchema = typeof schema;
+// Load schema file
+const schemaPath = join(__dirname, '../../schemas/ticket-schema.json');
+const schema = JSON.parse(await readFile(schemaPath, 'utf-8')) as TicketSchema;
 
 interface ChildTicket {
   id: string;
@@ -65,13 +81,7 @@ function validateTicket(ticket: unknown, filePath: string): ticket is Ticket {
   }
 }
 
-function parseBoolean(value: string | boolean | undefined): boolean {
-  if (typeof value === 'boolean') return value;
-  if (typeof value === 'string') {
-    return value.toLowerCase() === 'true';
-  }
-  return false;
-}
+// parseBoolean function removed as it's not being used
 
 function normalizePath(inputPath: string, baseDir: string): string {
   // If path is absolute, return as is

@@ -4,7 +4,7 @@ type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 export class Logger {
   private static instance: Logger;
-  private debugMode: boolean;
+  private debugMode = false;
   private startTime: number;
   
   /**
@@ -14,19 +14,19 @@ export class Logger {
     return this.debugMode;
   }
 
-  private constructor(debug: boolean = false) {
+  private constructor(debug = false) {
     this.debugMode = debug;
     this.startTime = Date.now();
   }
 
-  public static getInstance(debug: boolean = false): Logger {
+  public static getInstance(debug = false): Logger {
     if (!Logger.instance) {
       Logger.instance = new Logger(debug);
     }
     return Logger.instance;
   }
 
-  private formatMessage(level: LogLevel, message: string, emoji: string = ''): string {
+  private formatMessage(level: LogLevel, message: string, emoji = ''): string {
     const timestamp = new Date().toISOString();
     const elapsed = `+${((Date.now() - this.startTime) / 1000).toFixed(2)}s`;
     const prefix = emoji ? `${emoji} ` : '';
@@ -57,7 +57,7 @@ export class Logger {
     }
   }
 
-  public info(message: string, emoji: string = 'ℹ️'): void {
+  public info(message: string, emoji = 'ℹ️'): void {
     const fullMessage = this.formatMessage('info', message, emoji);
     core.info(fullMessage);
   }
