@@ -27,7 +27,12 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          npm install -g typescript@latest
+      
+      - name: Type check
+        run: npx tsc --noEmit
       
       - name: Lint
         run: npm run lint
