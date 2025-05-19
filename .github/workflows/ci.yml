@@ -99,7 +99,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.semantic-release.outputs.release_id }}/assets{?name,label}
+          upload_url: https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.semantic-release.outputs.release_id }}/assets?name=index.js
           asset_path: ./dist/index.js
           asset_name: index.js
           asset_content_type: application/javascript
