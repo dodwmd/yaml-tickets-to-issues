@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/dodwmd/yaml-tickets-to-issues/compare/v1.0.1...v1.0.2) (2025-05-19)
+
+
+### Bug Fixes
+
+* correct upload URL format for release assets ([7717821](https://github.com/dodwmd/yaml-tickets-to-issues/commit/77178211dc6ff57c382e050d43a7c7a31dbc9976))
+
 ## [1.0.1](https://github.com/dodwmd/yaml-tickets-to-issues/compare/v1.0.0...v1.0.1) (2025-05-19)
 
 
