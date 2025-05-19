@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/dodwmd/yaml-tickets-to-issues/compare/v1.0.0...v1.0.1) (2025-05-19)
+
+
+### Bug Fixes
+
+* update release workflow to handle asset uploads ([ef4af4d](https://github.com/dodwmd/yaml-tickets-to-issues/commit/ef4af4dc1a12fc1c3d6e967205cf460183604996))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
