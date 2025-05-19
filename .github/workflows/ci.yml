@@ -80,18 +80,26 @@ jobs:
           git config --global user.email "actions@github.com"
 
       - name: Semantic Release
+        id: semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
+        run: |
+          npx semantic-release
+          # Get the release ID from the created release
+          RELEASE_ID=$(gh api \
+            -H "Accept: application/vnd.github.v3+json" \
+            /repos/$GITHUB_REPOSITORY/releases/tags/$(git describe --tags) \
+            --jq .id)
+          echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
 
-      - name: Upload Release Assets
+      - name: Upload Release Asset
         if: success() && !cancelled()
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ github.event.release.upload_url }}
+          upload_url: https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.semantic-release.outputs.release_id }}/assets{?name,label}
           asset_path: ./dist/index.js
           asset_name: index.js
           asset_content_type: application/javascript
