@@ -1,23 +1,23 @@
-name: 'Sync YAML Tickets to GitHub Issues'
-description: 'Convert YAML ticket files to GitHub issues and keep them in sync'
+name: "Sync YAML Tickets to GitHub Issues"
+description: "Convert YAML ticket files to GitHub issues and keep them in sync"
 
 inputs:
   token:
-    description: 'GitHub token with repo scope'
+    description: "GitHub token with repo scope"
     required: true
   tickets-path:
-    description: 'Path to the directory containing YAML ticket files (default: tickets/)'
+    description: "Path to the directory containing YAML ticket files (default: tickets/)"
     required: false
-    default: 'tickets/'
+    default: "tickets/"
   dry-run:
-    description: 'Run without creating or updating issues (default: false)'
+    description: "Run without creating or updating issues (default: false)"
     required: false
-    default: 'false'
+    default: "false"
   debug:
-    description: 'Enable verbose debug logging (default: false)'
+    description: "Enable verbose debug logging (default: false)"
     required: false
-    default: 'false'
+    default: "false"
 
 runs:
-  using: 'node20'
-  main: 'dist/index.js'
+  using: "node20"
+  main: "dist/index.js"
