@@ -18,5 +18,13 @@ export default {
         "test",
       ],
     ],
+    "body-max-line-length": [
+      1,
+      "always",
+      1000, // Allow longer lines in commit body for release commits
+    ],
   },
+  ignores: [
+    (commit) => commit.startsWith('chore(release):'), // Skip validation for release commits
+  ],
 };
