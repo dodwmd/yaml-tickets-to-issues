@@ -25,6 +25,6 @@ export default {
     ],
   },
   ignores: [
-    (commit) => commit.startsWith('chore(release):'), // Skip validation for release commits
+    (commit) => commit.startsWith("chore(release):"), // Skip validation for release commits
   ],
 };
