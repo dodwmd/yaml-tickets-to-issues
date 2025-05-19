@@ -3,13 +3,13 @@ name: CI
 on:
   push:
     branches: [main, master]
-    tags: ['v*']
+    tags: ["v*"]
   pull_request:
     branches: [main, master]
   workflow_dispatch:
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: "18"
   DEFAULT_BRANCH: main
 
 jobs:
@@ -19,25 +19,30 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      
+          cache: "npm"
+
       - name: Install dependencies
-        run: npm ci
-      
+        run: |
+          npm ci
+          npm install -g typescript@latest
+
+      - name: Type check
+        run: npx tsc --noEmit
+
       - name: Lint
         run: npm run lint
-      
+
       - name: Build
         run: npm run build
-      
+
       - name: Test
         run: npm test
-      
+
       - name: Format check
         run: npm run format:check
 
@@ -61,7 +66,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -95,46 +100,55 @@ jobs:
     name: Integration Test
     needs: test
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Use Node.js 20.x
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20.x'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Run integration tests
-      run: |
-        # Create test tickets directory
-        mkdir -p test-tickets
-        
-        # Create a test ticket
-        cat > test-tickets/TEST-001-test-ticket.yaml << 'EOL'
-        title: "[TEST] Test Ticket"
-        description: |
-          This is a test ticket for integration testing.
-          
-          **Steps to reproduce:**
-          1. Run the action
-          2. Verify the issue is created
-          
-        acceptance_criteria:
-          - The action should complete successfully
-          - The issue should be created with the correct title and description
-          
-        test_metadata:
-          test_case: "basic_ticket_creation"
-          expected_result: "Issue created successfully"
-        EOL
-        
-        # Run the action in dry-run mode
-        node dist/index.js
-      env:
-        INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        INPUT_TICKETS-PATH: 'test-tickets/'
-        INPUT_DRY-RUN: 'true'
-        GITHUB_REPOSITORY: ${{ github.repository }}
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.x"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the project
+        run: |
+          npm run build
+          # Verify the built file exists
+          if [ ! -f dist/index.js ]; then
+            echo "::error::Build failed - dist/index.js not found"
+            exit 1
+          fi
+
+      - name: Run integration tests
+        run: |
+          # Create test tickets directory
+          mkdir -p test-tickets
+
+          # Create a test ticket
+          cat > test-tickets/TEST-001-test-ticket.yaml << 'EOL'
+          title: "[TEST] Test Ticket"
+          description: |
+            This is a test ticket for integration testing.
+            
+            **Steps to reproduce:**
+            1. Run the action
+            2. Verify the issue is created
+            
+          acceptance_criteria:
+            - The action should complete successfully
+            - The issue should be created with the correct title and description
+            
+          test_metadata:
+            test_case: "basic_ticket_creation"
+            expected_result: "Issue created successfully"
+          EOL
+
+          # Run the action in dry-run mode
+          node dist/index.js
+        env:
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_TICKETS-PATH: "test-tickets/"
+          INPUT_DRY-RUN: "true"
+          GITHUB_REPOSITORY: ${{ github.repository }}

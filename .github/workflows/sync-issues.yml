@@ -1,21 +1,21 @@
 name: Sync Tickets to Issues
 
 on:
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch: # Manual trigger
   push:
-    branches: [ main ]
+    branches: [main, master]
     paths:
-      - 'tickets/**'
+      - "tickets/**"
 
 jobs:
   sync-issues:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Sync YAML tickets to GitHub Issues
-        uses: ./  # Path to the action directory
+        uses: ./ # Path to the action directory
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tickets-path: 'tickets/'
-          dry-run: 'false'  # Set to 'true' for testing
+          tickets-path: "tickets/"
+          dry-run: "false" # Set to 'true' for testing

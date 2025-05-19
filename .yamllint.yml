@@ -1,17 +1,14 @@
 extends: default
 
 rules:
-  # Use 2 spaces for indentation
+  # Indentation settings
   indentation:
     spaces: 2
     indent-sequences: true
     check-multi-line-strings: false
 
-  # Line length (120 characters)
+  # Line length (disabled - let Prettier handle this)
   line-length: disable
-
-  # No tabs for indentation
-  indentation: disable
 
   # No trailing spaces
   trailing-spaces: disable
@@ -30,24 +27,6 @@ rules:
 
   # Consistent spacing around brackets
   brackets: disable
-
-  # Consistent spacing after commas
-  commas: disable
-
-  # Consistent spacing after hyphens in sequences
-  hyphens: disable
-
-  # Consistent spacing around colons in mappings
-  colons: disable
-
-  # Consistent spacing after commas
-  commas: disable
-
-  # Consistent spacing around brackets
-  brackets: disable
-
-  # Consistent spacing after commas
-  commas: disable
 
   # Consistent spacing after hyphens in sequences
   hyphens: disable
